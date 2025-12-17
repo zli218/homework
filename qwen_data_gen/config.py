@@ -5,10 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    # API 配置 (使用阿里云 DashScope 的 OpenAI 兼容接口)
-    API_KEY = os.getenv("DASHSCOPE_API_KEY")
-    BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    MODEL_NAME = "qwen-plus"  # Teacher Model
+    # API 配置
+    API_KEY = os.getenv("GOOGLE_API_KEY")
+    MODEL_NAME = os.getenv("MODEL_NAME", "qwen-plus")  # Teacher Model
 
     # 目标代码仓配置
     REPO_URL = "https://github.com/cosmicpython/code.git"
@@ -23,4 +22,4 @@ class Config:
     MAX_TEMP = 0.9
 
     if not API_KEY:
-        raise ValueError("请在环境变量或 .env 文件中设置 DASHSCOPE_API_KEY")
+        raise ValueError("请在环境变量或 .env 文件中设置 GOOGLE_API_KEY")
