@@ -1,5 +1,17 @@
-google-genai
-gitpython>=3.1.0
-tenacity>=8.2.0
-python-dotenv>=1.0.0
+# 基础工具
+python-dotenv
 tqdm
+tenacity
+
+# 代码仓库操作
+GitPython
+
+# Google Gemini API
+google-genai
+
+# 小模型验证 (finetune_quick_test.py)
+torch
+transformers
+peft
+datasets
+accelerate

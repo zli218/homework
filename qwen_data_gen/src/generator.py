@@ -106,7 +106,8 @@ class DataGenerator:
         }}
         """
 
-    @retry(stop=stop_after_attempt(15), wait=wait_exponential(multiplier=1, min=4, max=60))
+    # 优化指数退避策略：初始等待至少 10秒，每次失败等待时间翻倍 (multiplier=2)，最大等待 120秒
+    @retry(stop=stop_after_attempt(15), wait=wait_exponential(multiplier=2, min=10, max=120))
     def generate_sample(self, chunk: dict, scenario: str = "qa") -> dict:
         persona = self._get_random_persona()
         

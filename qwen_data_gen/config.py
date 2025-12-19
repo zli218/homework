@@ -15,7 +15,7 @@ class Config:
     
     # 数据生成配置
     OUTPUT_FILE = "qwen_finetune_data.jsonl"
-    MAX_SAMPLES = 50  # 演示用，实际生产可调大
+    MAX_SAMPLES = 50 # 样本数量
     
     # 多样性配置 (Temperature Scaling)
     MIN_TEMP = 0.7
