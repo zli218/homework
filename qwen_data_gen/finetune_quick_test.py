@@ -15,7 +15,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct" 
 DATA_FILE = "qwen_finetune_data.jsonl"
 OUTPUT_DIR = "./output_check"
-MAX_STEPS = 30  # 仅跑 30 步用于验证，实际训练请调大
+MAX_STEPS = 30  # 增加步数以触发验证和观察 Loss 变化
 
 def main():
     # 0. 环境检查
@@ -35,8 +35,19 @@ def main():
     # 1. 加载并处理数据
     print(f">>> 正在加载数据集...")
     try:
-        dataset = load_dataset("json", data_files=DATA_FILE, split="train")
-        print(f">>> 成功加载 {len(dataset)} 条样本。")
+        full_dataset = load_dataset("json", data_files=DATA_FILE, split="train")
+        print(f">>> 成功加载 {len(full_dataset)} 条样本。")
+        
+        # 切分训练集和验证集 (9:1)
+        if len(full_dataset) >= 10:
+            split_ds = full_dataset.train_test_split(test_size=0.1, seed=42)
+            train_ds = split_ds["train"]
+            eval_ds = split_ds["test"]
+            print(f">>> 训练集: {len(train_ds)} 条, 验证集: {len(eval_ds)} 条")
+        else:
+            train_ds = full_dataset
+            eval_ds = None
+            print(">>> 样本过少，跳过验证集切分。")
     except Exception as e:
         print(f"数据集加载失败: {e}")
         return
@@ -75,7 +86,8 @@ def main():
         }
 
     print(">>> 正在预处理数据...")
-    tokenized_ds = dataset.map(process_func, remove_columns=dataset.column_names)
+    tokenized_train = train_ds.map(process_func, remove_columns=train_ds.column_names)
+    tokenized_eval = eval_ds.map(process_func, remove_columns=eval_ds.column_names) if eval_ds else None
 
     # 2. 加载模型
     print(f">>> 正在加载模型 (这可能需要几分钟)...")
@@ -103,11 +115,16 @@ def main():
         output_dir=OUTPUT_DIR,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=4,
-        logging_steps=5,
+        logging_steps=1,
         max_steps=MAX_STEPS, # 快速验证
         learning_rate=2e-4,
         fp16=torch.cuda.is_available(),
-        save_strategy="no", 
+        # 添加验证配置
+        eval_strategy="steps" if eval_ds else "no",
+        eval_steps=5,
+        save_strategy="steps",
+        save_steps=5,
+        load_best_model_at_end=True if eval_ds else False,
         report_to="none"
     )
 
@@ -115,14 +132,15 @@ def main():
     trainer = Trainer(
         model=model,
         args=args,
-        train_dataset=tokenized_ds,
+        train_dataset=tokenized_train,
+        eval_dataset=tokenized_eval,
         data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True),
     )
     
-    print(">>> 开始微调 (演示运行)...")
+    print("\n>>> 开始微调 (演示运行)...")
     trainer.train()
     
-    print(f"\n>>> 验证完成！如果 Loss 在下降，说明数据格式被模型接受了。")
+    print(f"\n>>> 训练完成！")
 
 if __name__ == "__main__":
     main()
