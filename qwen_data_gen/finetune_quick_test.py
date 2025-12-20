@@ -10,15 +10,15 @@ from transformers import (
 )
 from peft import LoraConfig, get_peft_model, TaskType
 
-# === 配置区域 ===
+
 # 使用 Qwen2.5-0.5B-Instruct，模型非常小，适合快速验证流程
 MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct" 
 DATA_FILE = "qwen_finetune_data.jsonl"
 OUTPUT_DIR = "./output_check"
-MAX_STEPS = 30  # 增加步数以触发验证和观察 Loss 变化
+MAX_STEPS = 30  
 
 def main():
-    # 0. 环境检查
+    #  环境检查
     if not os.path.exists(DATA_FILE):
         print(f"错误：找不到数据文件 {DATA_FILE}")
         print("请先运行 main.py 生成数据。")
@@ -32,7 +32,7 @@ def main():
         print("提示: 国内用户请尝试设置环境变量 HF_ENDPOINT=https://hf-mirror.com")
         return
 
-    # 1. 加载并处理数据
+    #  加载并处理数据
     print(f">>> 正在加载数据集...")
     try:
         full_dataset = load_dataset("json", data_files=DATA_FILE, split="train")
@@ -60,7 +60,7 @@ def main():
         # 数据格式为 main.py 生成的 standard format
         msgs = example["conversation"]
         
-        # 使用 chat template 格式化
+       
         text = tokenizer.apply_chat_template(msgs, tokenize=False, add_generation_prompt=False)
         
         # Tokenize
@@ -75,7 +75,7 @@ def main():
         input_ids = model_inputs.input_ids[0]
         attention_mask = model_inputs.attention_mask[0]
         
-        # 简单构造 Labels: 让模型学习预测全文 (为了脚本简洁，不做复杂的 User Masking)
+        # 简单构造 Labels
         labels = input_ids.clone()
         labels[labels == tokenizer.pad_token_id] = -100
         

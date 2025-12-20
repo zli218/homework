@@ -317,8 +317,7 @@ class DataGenerator:
             user_content = self._extract_clean_instruction(raw_data)
             
             # 将代码原文和推理过程都放在 Assistant 回复中
-            # 核心修改：强制使用 chunk['code'] (原始代码段) 作为上下文，确保数据的准确性和合规性
-            # 而不是依赖 LLM 返回的可能被修改过的 input
+            # 强制使用 chunk['code'] (原始代码段) 作为上下文，确保数据的准确性和合规性
             assistant_content_str = ""
             code_content = chunk.get('code', "")
             if code_content:

@@ -25,12 +25,11 @@ class Config:
     RAG_ENABLED = False
     RAG_TOP_K = 2
 
-    # 自我修正 (Self-Correction) 配置
+    # 自我修正配置
     CRITIC_ENABLED = True
     CRITIC_THRESHOLD = 7  # 低于此分数的样本将被丢弃
 
     # 中英文生成比例配置 (0.0 to 1.0)
-    # 0.3 表示大约 30% 的样本会尝试用英文生成
     ENGLISH_RATIO = 0.3
 
     if not API_KEY:
