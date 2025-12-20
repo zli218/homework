@@ -18,8 +18,8 @@ class Config:
     MAX_SAMPLES = 100 # 样本数量
     
     # 多样性配置 (Temperature Scaling)
-    MIN_TEMP = 0.7
-    MAX_TEMP = 0.9
+    MIN_TEMP = 0.1
+    MAX_TEMP = 0.3
 
     # RAG 配置
     RAG_ENABLED = False

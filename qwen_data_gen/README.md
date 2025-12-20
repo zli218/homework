@@ -66,8 +66,8 @@
     *   不同人设关注代码的不同侧面（如架构师关注解耦，安全专家关注漏洞），从而生成多角度的问答数据。
 
 2.  **🌡️ 动态温度 (Dynamic Temperature)**:
-    *   在调用 Teacher Model 生成数据时，随机调整 Temperature 参数 (0.7 - 0.9)。
-    *   这增加了生成文本的语言风格和表达方式的多样性。
+    *   在调用 Teacher Model 生成数据时，随机调整 Temperature 参数 (0.1 - 0.3)。
+    *   这增加了生成文本的严谨性。
 
 3.  **🧠 思维链增强 (CoT Enforcement)**:
     *   强制要求输出 `Reasoning Trace`。这不仅提高了数据的含金量，也迫使 Teacher Model 进行更深层的逻辑思考，而非简单的文本补全。
@@ -84,7 +84,7 @@
 *   **方法**: LoRA (Low-Rank Adaptation)。
 *   **目标**: 验证数据格式是否正确，Loss 是否正常下降，以及模型是否学会了输出“推理过程”和“相关代码”的格式。
 
-## �️ 环境准备
+##  ️ 环境准备
 
 *   Python 3.8+
 *   有效的 Google Gemini API Key (可在 Google AI Studio 免费获取)
